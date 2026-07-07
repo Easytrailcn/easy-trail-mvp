@@ -1,0 +1,31 @@
+/* 顶部固定合规 banner */
+
+.compliance-banner {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background: #fef3c7;
+  border-bottom: 2px solid #f59e0b;
+  padding: 0.5rem 1rem;
+  text-align: center;
+  font-size: 0.875rem;
+  color: #78350f;
+  font-weight: 500;
+}
+
+.compliance-banner a {
+  color: #78350f;
+  margin-left: 0.5rem;
+  text-decoration: underline;
+}
+
+.compliance-banner a:hover {
+  color: #f59e0b;
+}
+
+@media (max-width: 768px) {
+  .compliance-banner {
+    font-size: 0.75rem;
+    padding: 0.4rem 0.5rem;
+  }
+}
