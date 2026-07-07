@@ -1,0 +1,21 @@
+{
+  "name": "easytrail-api",
+  "version": "0.1.0",
+  "description": "EasyTrail 临床试验查询 API",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "deploy:staging": "wrangler deploy --env staging",
+    "tail": "wrangler tail",
+    "db:init": "wrangler d1 execute easytrail-db --file=../../db/schema.sql",
+    "db:query": "wrangler d1 execute easytrail-db --command"
+  },
+  "devDependencies": {
+    "wrangler": "^3.0.0"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
