@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>搜索结果 - EasyTrail</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/banner.css">
+  <link rel="stylesheet" href="css/search.css">
+</head>
+<body>
+
+<!-- 顶部合规 banner -->
+<div class="compliance-banner">
+  ⚠️ 本工具仅提供临床试验信息查询,不构成医疗建议。参与临床试验请咨询主治医生。
+  <a href="legal/user-agreement.html">用户协议</a> ·
+  <a href="legal/privacy-policy.html">隐私政策</a>
+</div>
+
+<!-- 顶部导航 -->
+<header class="site-header">
+  <div class="container">
+    <a href="index.html" class="site-logo">
+      <span class="logo-icon">🔍</span>
+      <span class="logo-text">EasyTrail</span>
+    </a>
+    <nav class="site-nav">
+      <a href="index.html">← 返回首页</a>
+    </nav>
+  </div>
+</header>
+
+<main class="main-content search-page">
+
+  <div class="container">
+    <div class="search-layout">
+
+      <!-- 左侧筛选面板 -->
+      <aside class="filter-panel">
+        <h3 class="filter-title">筛选条件</h3>
+
+        <div class="filter-group">
+          <label class="filter-label">招募状态</label>
+          <select id="filter-status" class="filter-select">
+            <option value="RECRUITING">招募中</option>
+            <option value="ACTIVE_NOT_RECRUITING">进行中(暂停招募)</option>
+            <option value="NOT_YET_RECRUITING">尚未招募</option>
+            <option value="">全部状态</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label class="filter-label">试验阶段</label>
+          <select id="filter-phase" class="filter-select">
+            <option value="">全部阶段</option>
+            <option value="PHASE1">I 期</option>
+            <option value="PHASE2">II 期</option>
+            <option value="PHASE3">III 期</option>
+            <option value="PHASE4">IV 期</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label class="filter-label">国家/地区</label>
+          <select id="filter-country" class="filter-select">
+            <option value="">全部国家</option>
+            <option value="China">中国</option>
+            <option value="United States">美国</option>
+            <option value="Japan">日本</option>
+            <option value="Korea">韩国</option>
+            <option value="Germany">德国</option>
+            <option value="United Kingdom">英国</option>
+            <option value="France">法国</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label class="filter-label">试验类型</label>
+          <select id="filter-study-type" class="filter-select">
+            <option value="">全部类型</option>
+            <option value="INTERVENTIONAL">干预性研究</option>
+            <option value="OBSERVATIONAL">观察性研究</option>
+          </select>
+        </div>
+
+        <button id="filter-reset" class="filter-reset">重置筛选</button>
+      </aside>
+
+      <!-- 主结果区 -->
+      <section class="results-section">
+
+        <!-- 顶部搜索栏 -->
+        <form class="search-bar" action="search.html" method="get">
+          <input
+            type="text"
+            id="search-input"
+            name="q"
+            class="search-input-large"
+            placeholder="搜索关键词..."
+            autocomplete="off"
+          >
+          <input type="hidden" id="hidden-condition" name="condition">
+          <input type="hidden" id="hidden-phase" name="phase">
+          <input type="hidden" id="hidden-status" name="status">
+          <input type="hidden" id="hidden-country" name="country">
+          <button type="submit" class="search-button">🔍 搜索</button>
+        </form>
+
+        <!-- 结果统计与排序 -->
+        <div class="results-header">
+          <div class="results-count">
+            <span id="total-count">--</span> 条结果
+            <span id="search-summary" class="search-summary"></span>
+          </div>
+          <div class="results-sort">
+            <label>排序:</label>
+            <select id="sort-by" class="sort-select">
+              <option value="last_update_date">最近更新</option>
+              <option value="primary_completion_date">预计完成</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- 结果列表 -->
+        <div id="results-list" class="results-list">
+          <div class="loading">加载中...</div>
+        </div>
+
+        <!-- 翻页 -->
+        <div id="pagination" class="pagination" style="display:none;">
+          <button id="prev-page" class="page-btn">← 上一页</button>
+          <span id="page-info" class="page-info"></span>
+          <button id="next-page" class="page-btn">下一页 →</button>
+        </div>
+
+      </section>
+
+    </div>
+  </div>
+
+</main>
+
+<!-- 页脚 -->
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-bottom">
+      <p>© 2026 EasyTrail · 数据来源 ClinicalTrials.gov · MIT License</p>
+      <p class="footer-warning">⚠️ 本工具仅提供信息查询,不构成医疗建议</p>
+    </div>
+  </div>
+</footer>
+
+<script src="js/config.js"></script>
+<script src="js/api.js"></script>
+<script src="js/search.js"></script>
+
+</body>
+</html>
