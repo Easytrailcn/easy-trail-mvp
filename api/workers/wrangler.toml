@@ -1,0 +1,37 @@
+name = "easytrail-api"
+main = "src/index.js"
+compatibility_date = "2024-01-01"
+
+# Cloudflare Workers 配置
+# 部署前需要:
+# 1. 在 Cloudflare 控制台创建 D1 数据库,获得 database_id
+# 2. 创建 API Token,获得 api_token
+# 3. 在 wrangler.toml 中填入真实值
+
+# Workers 资源
+[build]
+command = ""
+
+# D1 数据库绑定
+[[d1_databases]]
+binding = "DB"
+database_name = "easytrail-db"
+database_id = "REPLACE_WITH_YOUR_D1_DATABASE_ID"
+migrations_dir = "../../db"
+
+# 环境变量(部署时通过 wrangler secret 设置,不要写在这里)
+# CF_ACCOUNT_ID - Cloudflare 账户 ID
+# CF_API_TOKEN - Cloudflare API Token
+# CF_D1_DATABASE_ID - D1 数据库 ID
+
+# 部署环境
+[env.production]
+name = "easytrail-api"
+
+[env.staging]
+name = "easytrail-api-staging"
+
+# 触发器(定时任务示例)
+# [triggers]
+# crons = ["0 */6 * * *"]  # 每 6 小时触发一次(用于 Workers 自带的定时任务)
+# 注:实际定时同步由 GitHub Actions 调度,这里不设
