@@ -1,0 +1,175 @@
+/* 试验详情页样式 */
+
+.trial-detail {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.detail-loading {
+  text-align: center;
+  padding: 3rem;
+  color: var(--color-text-light);
+}
+
+.detail-header {
+  background: white;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 2rem;
+  margin-bottom: 1.5rem;
+}
+
+.detail-nct {
+  font-family: monospace;
+  font-size: 0.9rem;
+  color: var(--color-text-light);
+  margin-bottom: 0.5rem;
+}
+
+.detail-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1.4;
+  margin-bottom: 1rem;
+}
+
+.detail-official {
+  font-size: 1rem;
+  color: var(--color-text-light);
+  margin-bottom: 1rem;
+  font-style: italic;
+}
+
+.detail-badges {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+
+.detail-actions {
+  display: flex;
+  gap: 0.75rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--color-border);
+}
+
+.detail-button {
+  padding: 0.6rem 1.2rem;
+  border-radius: var(--radius-md);
+  font-size: 0.95rem;
+  cursor: pointer;
+  text-decoration: none;
+  border: 1px solid var(--color-border);
+  background: white;
+  color: var(--color-text);
+}
+
+.detail-button:hover {
+  background: var(--color-bg-soft);
+}
+
+.detail-button.primary {
+  background: var(--color-primary);
+  color: white;
+  border-color: var(--color-primary);
+}
+
+.detail-button.primary:hover {
+  background: var(--color-primary-dark);
+}
+
+/* 详情区块 */
+.detail-section {
+  background: white;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.detail-section h2 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.detail-section p,
+.detail-section div {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin-bottom: 0.5rem;
+  white-space: pre-wrap;
+}
+
+/* 字段表格 */
+.field-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.field-table tr {
+  border-bottom: 1px solid var(--color-border);
+}
+
+.field-table tr:last-child {
+  border-bottom: none;
+}
+
+.field-table th,
+.field-table td {
+  padding: 0.75rem;
+  text-align: left;
+  font-size: 0.9rem;
+  vertical-align: top;
+}
+
+.field-table th {
+  width: 130px;
+  font-weight: 500;
+  color: var(--color-text-light);
+  background: var(--color-bg-soft);
+}
+
+/* 地点列表 */
+.location-item {
+  padding: 0.75rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.location-item:last-child {
+  border-bottom: none;
+}
+
+.location-facility {
+  font-weight: 500;
+  margin-bottom: 0.25rem;
+}
+
+.location-address {
+  font-size: 0.85rem;
+  color: var(--color-text-light);
+}
+
+.location-status {
+  display: inline-block;
+  font-size: 0.75rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: 9999px;
+  background: var(--color-bg-soft);
+  margin-left: 0.5rem;
+}
+
+/* 错误状态 */
+.detail-error {
+  text-align: center;
+  padding: 3rem;
+  color: var(--color-text-light);
+}
+
+.detail-error h2 {
+  color: var(--color-danger);
+  margin-bottom: 0.5rem;
+}
