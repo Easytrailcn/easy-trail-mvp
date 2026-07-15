@@ -367,6 +367,12 @@ a:hover {
   color: #f59e0b;
 }
 
+.footer-thanks {
+  color: #fbbf24;
+  font-weight: 500;
+  margin-top: 0.5rem !important;
+}
+
 /* 响应式 */
 @media (max-width: 768px) {
   .site-header .container {
