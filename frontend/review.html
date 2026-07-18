@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>置信度标注 · 寻试</title>
+  <link rel="stylesheet" href="css/style.css?v=20260717">
+  <link rel="stylesheet" href="css/review.css?v=20260717">
+</head>
+<body>
+  <header class="site-header">
+    <a href="/" class="logo">寻</a>
+    <div class="header-title">
+      <h1>置信度标注后台</h1>
+      <p class="subtitle">寻试·EasyTrail · 信息查询工具</p>
+    </div>
+  </header>
+
+  <main class="review-main">
+    <!-- 风险提示 banner -->
+    <div class="risk-banner">
+      <strong>本工具仅提供信息查询,不构成医疗建议</strong>
+    </div>
+
+    <!-- 致谢 -->
+    <div class="ack-line">致谢：宋、薛、张博士 · 美美小鱼 · 小手冰凉 · 树岛</div>
+
+    <!-- 统计面板 -->
+    <section class="stats-panel" id="statsPanel">
+      <h2>📊 标注概览</h2>
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-num" id="statTotal">-</div>
+          <div class="stat-label">总试验数</div>
+        </div>
+        <div class="stat-card basic">
+          <div class="stat-num" id="statBasic">-</div>
+          <div class="stat-label">basic 备案</div>
+        </div>
+        <div class="stat-card medium">
+          <div class="stat-num" id="statMedium">-</div>
+          <div class="stat-label">medium 已核对</div>
+        </div>
+        <div class="stat-card high">
+          <div class="stat-num" id="statHigh">-</div>
+          <div class="stat-label">high 官方吻合</div>
+        </div>
+        <div class="stat-card paid">
+          <div class="stat-num" id="statPaid">-</div>
+          <div class="stat-label">paid 企业维护</div>
+        </div>
+        <div class="stat-card pending">
+          <div class="stat-num" id="statPending">-</div>
+          <div class="stat-label">待复核</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 队列 -->
+    <section class="queue-panel">
+      <div class="queue-header">
+        <h2>📋 待标队列(招募中 + 中国站点)</h2>
+        <button class="btn-refresh" onclick="loadQueue()">🔄 刷新</button>
+      </div>
+      <div class="queue-list" id="queueList">
+        <div class="loading">加载中...</div>
+      </div>
+      <div class="queue-footer">
+        <button class="btn-load-more" id="btnLoadMore" onclick="loadMore()">加载更多</button>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>致谢：宋、薛、张博士 · 美美小鱼 · 小手冰凉 · 树岛</p>
+    <p class="legal">
+      <a href="/legal/user-agreement.html">用户协议</a> ·
+      <a href="/legal/privacy-policy.html">隐私政策</a>
+    </p>
+  </footer>
+
+  <script>
+    const API_BASE = 'https://api.easytrail.cn';
+    const REVIEWER = 'admin';
+    let queueOffset = 0;
+    const PAGE_SIZE = 10;
+    let loading = false;
+
+    async function loadStats() {
+      try {
+        const r = await fetch(API_BASE + '/api/review/stats');
+        const j = await r.json();
+        if (j.success) {
+          document.getElementById('statTotal').textContent = j.data.total_trials;
+          document.getElementById('statBasic').textContent = j.data.by_level.basic;
+          document.getElementById('statMedium').textContent = j.data.by_level.medium;
+          document.getElementById('statHigh').textContent = j.data.by_level.high;
+          document.getElementById('statPaid').textContent = j.data.by_level.paid;
+          document.getElementById('statPending').textContent = j.data.review_pending;
+        }
+      } catch (e) {
+        console.error('stats err', e);
+      }
+    }
+
+    async function loadQueue(reset = true) {
+      if (loading) return;
+      loading = true;
+      if (reset) {
+        queueOffset = 0;
+        document.getElementById('queueList').innerHTML = '<div class="loading">加载中...</div>';
+      }
+      try {
+        const r = await fetch(API_BASE + '/api/review/queue?limit=' + PAGE_SIZE);
+        const j = await r.json();
+        if (j.success) {
+          renderQueue(j.data);
+        } else {
+          document.getElementById('queueList').innerHTML = '<div class="error">加载失败: ' + (j.message || '未知错误') + '</div>';
+        }
+      } catch (e) {
+        document.getElementById('queueList').innerHTML = '<div class="error">网络错误: ' + e.message + '</div>';
+      }
+      loading = false;
+    }
+
+    function renderQueue(items) {
+      const list = document.getElementById('queueList');
+      if (!items || items.length === 0) {
+        list.innerHTML = '<div class="empty">🎉 队列已清空</div>';
+        return;
+      }
+      list.innerHTML = items.map(t => renderItem(t)).join('');
+      // 绑定按钮
+      items.forEach(t => {
+        const card = document.querySelector(`[data-nct="${t.nct_id}"]`);
+        if (!card) return;
+        card.querySelectorAll('.btn-decision').forEach(btn => {
+          btn.onclick = () => submitDecision(t.nct_id, btn.dataset.level, card);
+        });
+        const aiBtn = card.querySelector('.btn-ai-suggest');
+        if (aiBtn) {
+          aiBtn.onclick = () => aiSuggest(t.nct_id, card);
+        }
+      });
+    }
+
+    function renderItem(t) {
+      const curLevel = t.confidence_level || 'basic';
+      const levelLabel = { basic: '备案信息', medium: '已核对', high: '官方吻合', paid: '企业维护' }[curLevel] || '备案信息';
+      const aiBadge = t.ai_suggested_level
+        ? `<span class="ai-badge">AI 建议: <strong>${t.ai_suggested_level}</strong></span>`
+        : '';
+      const reviewedBadge = t.human_decision && t.human_decision !== 'pending'
+        ? `<span class="reviewed-badge">已标 ${t.human_decision} (${t.human_decision_at || ''})</span>`
+        : '';
+      return `
+        <div class="trial-card" data-nct="${t.nct_id}">
+          <div class="trial-header">
+            <span class="nct-id">${t.nct_id}</span>
+            <span class="status-pill status-${t.overall_status}">${t.overall_status}</span>
+            <span class="phase-pill">${t.phase || 'N/A'}</span>
+            <span class="level-pill level-${curLevel}">${levelLabel}</span>
+            ${aiBadge}
+            ${reviewedBadge}
+          </div>
+          <h3 class="trial-title">
+            <a href="https://clinicaltrials.gov/study/${t.nct_id}" target="_blank" rel="noopener">
+              ${t.brief_title}
+            </a>
+          </h3>
+          <div class="trial-meta">
+            <div><strong>癌种:</strong> ${t.condition_zh || t.condition || 'N/A'}</div>
+            <div><strong>干预:</strong> ${t.intervention_zh || t.intervention || 'N/A'}</div>
+            <div><strong>主办方:</strong> ${t.sponsor_name || 'N/A'}</div>
+          </div>
+          <div class="ai-evidence" id="aiEvidence-${t.nct_id}">
+            ${t.ai_evidence ? '📝 ' + t.ai_evidence : ''}
+          </div>
+          <div class="trial-actions">
+            <textarea class="note-input" placeholder="备注(可选,例:已核对 CDE 登记号 xxx)" rows="1"></textarea>
+            <div class="decision-buttons">
+              <button class="btn-decision basic" data-level="basic">basic 备案</button>
+              <button class="btn-decision medium" data-level="medium">medium 已核对</button>
+              <button class="btn-decision high" data-level="high">high 官方吻合</button>
+              <button class="btn-decision paid" data-level="paid">paid 企业维护</button>
+              <button class="btn-ai-suggest">🤖 AI 评分</button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    async function submitDecision(nctId, decision, card) {
+      const note = card.querySelector('.note-input').value.trim();
+      if (!confirm(`确定把 ${nctId} 标为 ${decision}?`)) return;
+      try {
+        const r = await fetch(API_BASE + '/api/review/decision', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ nct_id: nctId, decision, note, reviewed_by: REVIEWER }),
+        });
+        const j = await r.json();
+        if (j.success) {
+          card.classList.add('flash-success');
+          setTimeout(() => card.classList.remove('flash-success'), 1000);
+          loadStats();
+          // 标完后自动加载下一个
+          setTimeout(() => loadQueue(false), 800);
+        } else {
+          alert('提交失败: ' + j.message);
+        }
+      } catch (e) {
+        alert('网络错误: ' + e.message);
+      }
+    }
+
+    async function aiSuggest(nctId, card) {
+      card.querySelector('.btn-ai-suggest').textContent = '🤖 评分中...';
+      card.querySelector('.btn-ai-suggest').disabled = true;
+      try {
+        const r = await fetch(API_BASE + '/api/review/ai-suggest', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ nct_id: nctId }),
+        });
+        const j = await r.json();
+        if (j.success) {
+          const ev = card.querySelector('.ai-evidence');
+          ev.innerHTML = `🤖 AI 建议: <strong>${j.data.suggested_level}</strong> (score=${j.data.score}) - ${j.data.reason}<br><small>${j.data.evidence.join(' | ')}</small>`;
+          // 高亮对应按钮
+          card.querySelectorAll('.btn-decision').forEach(b => {
+            b.classList.remove('ai-suggested');
+            if (b.dataset.level === j.data.suggested_level) {
+              b.classList.add('ai-suggested');
+            }
+          });
+        } else {
+          alert('AI 评分失败: ' + j.message);
+        }
+      } catch (e) {
+        alert('网络错误: ' + e.message);
+      }
+      card.querySelector('.btn-ai-suggest').textContent = '🤖 AI 评分';
+      card.querySelector('.btn-ai-suggest').disabled = false;
+    }
+
+    // 启动
+    loadStats();
+    loadQueue();
+  </script>
+</body>
+</html>

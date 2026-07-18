@@ -180,15 +180,10 @@ function renderTrialCard(trial) {
   const phase = trial.phase || trial.phases;
   const sponsor = trial.sponsor || trial.sponsor_name || trial.lead_sponsor;
   const phaseLabel = formatPhase(phase);
-  // 疾病: 优先用中文 condition_zh, 没有再 fallback 英文
+  // condition 可能是 string 或 array
   let conditionList = [];
-  if (typeof trial.condition_zh === 'string' && trial.condition_zh.trim()) {
-    conditionList = trial.condition_zh.split(/[;,、]/).map(s => s.trim()).filter(Boolean).slice(0, 3);
-  } else if (Array.isArray(trial.conditions)) {
-    conditionList = trial.conditions.slice(0, 3);
-  } else if (typeof trial.condition === 'string' && trial.condition) {
-    conditionList = trial.condition.split(/[;,、]/).map(s => s.trim()).filter(Boolean).slice(0, 3);
-  }
+  if (Array.isArray(trial.conditions)) conditionList = trial.conditions.slice(0, 3);
+  else if (typeof trial.condition === 'string' && trial.condition) conditionList = trial.condition.split(/[;,、]/).map(s => s.trim()).filter(Boolean).slice(0, 3);
 
   let html = '<div class="trial-card" data-nct="' + escapeHtml(trial.nct_id) + '">';
   html += '<div class="trial-card-header">';

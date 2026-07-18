@@ -1,12 +1,13 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>EasyTrail - 临床试验查询</title>
   <meta name="description" content="帮助癌症患者及家属快速找到可参与的临床试验。信息查询工具,不构成医疗建议。">
-  <link rel="stylesheet" href="css/style.css">
-  <link rel="stylesheet" href="css/banner.css">
+  <link rel="stylesheet" href="css/style.css?v=1784181000000">
+  <link rel="stylesheet" href="css/banner.css?v=1784181000000">
+  <link rel="stylesheet" href="css/consent.css?v=1784181000000">
 </head>
 <body>
 
@@ -21,17 +22,16 @@
 <header class="site-header">
   <div class="container">
     <a href="index.html" class="site-logo">
-      <span class="logo-icon">🔍</span>
+      <span class="logo-icon">寻</span>
       <span class="logo-text">EasyTrail</span>
-      <span class="logo-tagline">临床试验查询</span>
+      <span class="logo-tagline">寻试·临床试验检索</span>
     </a>
     <nav class="site-nav">
       <a href="index.html">首页</a>
       <a href="search.html?q=肺癌">肺癌</a>
       <a href="search.html?q=肝癌">肝癌</a>
       <a href="search.html?q=乳腺癌">乳腺癌</a>
-      <a href="search.html?q=胃癌">胃癌</a>
-      <a href="search.html">全部癌种</a>
+      <a href="search.html?q=白血病">白血病</a>
     </nav>
   </div>
 </header>
@@ -41,9 +41,9 @@
   <!-- Hero 搜索区 -->
   <section class="hero">
     <div class="container">
-      <h1 class="hero-title">找到适合的临床试验</h1>
+      <h1 class="hero-title">找到正在招募的临床试验</h1>
       <p class="hero-subtitle">
-        基于 ClinicalTrials.gov 公开数据,免费查询全球正在招募的肿瘤临床试验
+        帮助癌症患者及家属快速查询全球范围内正在招募的肿瘤临床试验,信息透明,免费使用。
       </p>
 
       <form class="search-form" action="search.html" method="get">
@@ -51,18 +51,25 @@
           type="text"
           name="q"
           class="search-input"
-          placeholder="输入疾病、疗法或 NCT 编号(例:肺癌、PD-1、NCT07444203)"
+          placeholder="输入疾病、疗法或 NCT 编号(例:肺癌、PD-1)"
           autocomplete="off"
+          required
         >
-        <button type="submit" class="search-button">🔍 搜索</button>
+        <input type="hidden" name="global" value="0" id="global-input">
+        <div class="scope-toggle" role="tablist">
+          <button type="button" class="scope-btn active" id="tab-china" data-scope="china" role="tab" aria-selected="true">国内试验</button>
+          <button type="button" class="scope-btn" id="tab-global" data-scope="global" role="tab" aria-selected="false">全球试验</button>
+        </div>
+        <button type="submit" class="search-button-primary">🔍 搜索</button>
       </form>
 
       <div class="search-suggestions">
         <span class="suggestion-label">热门:</span>
-        <a href="search.html?q=肺癌%20III期">肺癌 III 期</a>
+        <a href="search.html?q=肺癌%20III%20期">肺癌 III 期</a>
         <a href="search.html?q=肝癌%20靶向">肝癌 靶向</a>
         <a href="search.html?q=乳腺癌%20HER2">乳腺癌 HER2</a>
         <a href="search.html?q=淋巴瘤%20CAR-T">淋巴瘤 CAR-T</a>
+        <a href="search.html?q=白血病">白血病</a>
       </div>
     </div>
   </section>
@@ -202,14 +209,15 @@
     <div class="footer-bottom">
       <p>© 2026 EasyTrail · MIT License · 数据来源 ClinicalTrials.gov</p>
       <p class="footer-warning">⚠️ 本工具仅提供信息查询,不构成医疗建议</p>
-      <p class="footer-thanks">致谢:感谢美美小鱼提供的支持 💛</p>
+      <p class="footer-thanks">致谢：宋、薛、张博士 · 美美小鱼 · 小手冰凉 · 树岛</p>
     </div>
   </div>
 </footer>
 
-<script src="js/config.js"></script>
-<script src="js/api.js"></script>
-<script src="js/index.js"></script>
+<script src="js/config.js?v=1784181000000"></script>
+<script src="js/api.js?v=1784181000000"></script>
+<script src="js/consent.js?v=1784181000000"></script>
+<script src="js/index.js?v=1784181000000"></script>
 
 </body>
 </html>

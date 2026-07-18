@@ -164,6 +164,103 @@ a:hover {
   font-size: 1rem;
   cursor: pointer;
   transition: background 0.15s;
+  font-family: inherit;
+  font-weight: 500;
+}
+
+/* 寻字 logo 样式 */
+.logo-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: #2563eb;
+  color: #fff;
+  border-radius: 6px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  margin-right: 0.5rem;
+}
+.logo-text {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1f2937;
+  letter-spacing: 0.5px;
+}
+.logo-tagline {
+  font-size: 0.8rem;
+  color: #6b7280;
+  margin-left: 0.5rem;
+}
+
+/* 首页搜索 tab (国内/全球) + 单搜索按钮 (方案 B) */
+.search-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.search-form .search-input {
+  width: 100%;
+  padding: 0.85rem 1rem;
+  font-size: 1rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  outline: none;
+  font-family: inherit;
+  box-sizing: border-box;
+}
+.search-form .search-input:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+.search-form .scope-toggle {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #f3f4f6;
+}
+.search-form .scope-btn {
+  padding: 0.7rem 0.5rem;
+  border: none;
+  background: transparent;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #6b7280;
+  cursor: pointer;
+  transition: all 0.15s;
+  font-family: inherit;
+}
+.search-form .scope-btn:hover {
+  color: #1f2937;
+}
+.search-form .scope-btn.active {
+  background: #2563eb;
+  color: #fff;
+}
+.search-form .search-button-primary {
+  width: auto;
+  min-width: 140px;
+  max-width: 200px;
+  margin: 0 auto;
+  padding: 0.7rem 1.5rem;
+  background: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s;
+  font-family: inherit;
+  display: block;
+}
+.search-form .search-button-primary:hover {
+  background: #1d4ed8;
 }
 
 .search-button:hover {
@@ -368,9 +465,12 @@ a:hover {
 }
 
 .footer-thanks {
-  color: #fbbf24;
-  font-weight: 500;
-  margin-top: 0.5rem !important;
+  color: #94a3b8;
+  font-size: 0.72rem;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  margin-top: 0.4rem !important;
+  opacity: 0.85;
 }
 
 /* 响应式 */

@@ -22,7 +22,9 @@ async function loadTrial(nctId) {
   detailEl.innerHTML = '<div class="detail-loading">加载中...</div>';
 
   try {
-    const trial = await API.getTrial(nctId);
+    const result = await API.getTrial(nctId);
+    // API 返回 { success, data: {...} } - 解开 data 包装
+    const trial = result.data || result;
     renderTrial(trial);
     document.title = (trial.brief_title || '试验详情') + ' - EasyTrail';
   } catch (err) {
@@ -35,10 +37,15 @@ function renderTrial(trial) {
 
   // 字段适配: 详情 API 部分字段名跟前端期望不一致
   const phaseLabel = formatPhase(trial.phase || trial.phases);
-  // condition 可能是 string, 也可能是 conditions array
+  // condition 优先用中文 condition_zh, fallback conditions array, 最后 condition string
   let conditionList = [];
-  if (Array.isArray(trial.conditions)) conditionList = trial.conditions;
-  else if (typeof trial.condition === 'string' && trial.condition) conditionList = trial.condition.split(/[;,、]/).map(s => s.trim()).filter(Boolean);
+  if (typeof trial.condition_zh === 'string' && trial.condition_zh.trim()) {
+    conditionList = trial.condition_zh.split(/[;,、]/).map(s => s.trim()).filter(Boolean);
+  } else if (Array.isArray(trial.conditions)) {
+    conditionList = trial.conditions;
+  } else if (typeof trial.condition === 'string' && trial.condition) {
+    conditionList = trial.condition.split(/[;,、]/).map(s => s.trim()).filter(Boolean);
+  }
   // interventions 可能是 array of {intervention, intervention_type}
   let interventionNames = [];
   let interventionTypes = [];
@@ -99,7 +106,15 @@ function renderTrial(trial) {
   if (trial.study_type) html += fieldRow('研究类型', trial.study_type);
   if (phaseLabel) html += fieldRow('试验阶段', phaseLabel);
   if (trial.lead_sponsor || trial.sponsor_name) html += fieldRow('主办方', trial.lead_sponsor || trial.sponsor_name);
-  if (trial.enrollment_count || trial.enrollment) html += fieldRow('计划招募人数', (trial.enrollment_count || trial.enrollment) + ' 人');
+  // 已招人数 vs 计划招募
+  if (trial.enrollment_actual && trial.enrollment) {
+    const pct = Math.round((trial.enrollment_actual / trial.enrollment) * 100);
+    html += fieldRow('招募进度', trial.enrollment_actual + ' / ' + trial.enrollment + ' 人 (' + pct + '%)');
+  } else if (trial.enrollment_count || trial.enrollment) {
+    html += fieldRow('计划招募人数', (trial.enrollment_count || trial.enrollment) + ' 人');
+  }
+  // 试验日期 - 4 个分开
+  if (trial.first_post_date) html += fieldRow('首次公示', formatDate(trial.first_post_date));
   if (trial.start_date) html += fieldRow('开始日期', formatDate(trial.start_date));
   if (trial.primary_completion_date) html += fieldRow('主要完成日期', formatDate(trial.primary_completion_date));
   if (trial.completion_date) html += fieldRow('预计完成日期', formatDate(trial.completion_date));
@@ -115,6 +130,55 @@ function renderTrial(trial) {
   }
   html += '</table>';
   html += '</div>';
+
+  // 试验设计
+  if (trial.study_design) {
+    html += '<div class="detail-section">';
+    html += '<h2>试验设计</h2>';
+    html += '<table class="field-table">';
+    // 把 "分配方式:Randomized; 干预模型:Parallel Assignment; ..." 拆成多行
+    const parts = trial.study_design.split(/\s*;\s*/);
+    for (const p of parts) {
+      const colonIdx = p.indexOf(':');
+      if (colonIdx > 0) {
+        const k = p.substring(0, colonIdx).trim();
+        const v = p.substring(colonIdx + 1).trim();
+        if (k && v) html += fieldRow(k, v);
+      } else if (p.trim()) {
+        html += fieldRow('', p.trim());
+      }
+    }
+    html += '</table>';
+    html += '</div>';
+  }
+
+  // 主要终点指标
+  if (Array.isArray(trial.primary_outcomes) && trial.primary_outcomes.length > 0) {
+    html += '<div class="detail-section">';
+    html += '<h2>主要终点指标 (' + trial.primary_outcomes.length + ' 项)</h2>';
+    for (const o of trial.primary_outcomes) {
+      html += '<div class="outcome-item">';
+      html += '<div class="outcome-measure">' + escapeHtml(o.measure || '未提供') + '</div>';
+      if (o.description) html += '<div class="outcome-desc">' + escapeHtml(o.description) + '</div>';
+      if (o.time_frame) html += '<div class="outcome-time">⏱ ' + escapeHtml(o.time_frame) + '</div>';
+      html += '</div>';
+    }
+    html += '</div>';
+  }
+
+  // 次要终点指标
+  if (Array.isArray(trial.secondary_outcomes) && trial.secondary_outcomes.length > 0) {
+    html += '<div class="detail-section">';
+    html += '<h2>次要终点指标 (' + trial.secondary_outcomes.length + ' 项)</h2>';
+    for (const o of trial.secondary_outcomes) {
+      html += '<div class="outcome-item">';
+      html += '<div class="outcome-measure">' + escapeHtml(o.measure || '未提供') + '</div>';
+      if (o.description) html += '<div class="outcome-desc">' + escapeHtml(o.description) + '</div>';
+      if (o.time_frame) html += '<div class="outcome-time">⏱ ' + escapeHtml(o.time_frame) + '</div>';
+      html += '</div>';
+    }
+    html += '</div>';
+  }
 
   // 疾病/适应症
   if (conditionList.length > 0) {

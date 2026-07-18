@@ -1,12 +1,13 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>搜索结果 - EasyTrail</title>
-  <link rel="stylesheet" href="css/style.css">
-  <link rel="stylesheet" href="css/banner.css">
-  <link rel="stylesheet" href="css/search.css">
+  <link rel="stylesheet" href="css/style.css?v=1784200000000">
+  <link rel="stylesheet" href="css/banner.css?v=1784200000000">
+  <link rel="stylesheet" href="css/search.css?v=1784200000000">
+  <link rel="stylesheet" href="css/consent.css?v=1784200000000">
 </head>
 <body>
 
@@ -21,8 +22,9 @@
 <header class="site-header">
   <div class="container">
     <a href="index.html" class="site-logo">
-      <span class="logo-icon">🔍</span>
+      <span class="logo-icon">寻</span>
       <span class="logo-text">EasyTrail</span>
+      <span class="logo-tagline">寻试·临床试验检索</span>
     </a>
     <nav class="site-nav">
       <a href="index.html">← 返回首页</a>
@@ -38,6 +40,19 @@
       <!-- 左侧筛选面板 -->
       <aside class="filter-panel">
         <h3 class="filter-title">筛选条件</h3>
+
+        <!-- A3: 国内 / 全球 切换按钮 -->
+        <div class="filter-group">
+          <label class="filter-label">试验范围</label>
+          <div class="scope-toggle" role="group" aria-label="试验范围">
+            <button type="button" class="scope-btn active" id="scope-china" data-scope="china">
+              国内试验
+            </button>
+            <button type="button" class="scope-btn" id="scope-global" data-scope="global">
+              全球试验
+            </button>
+          </div>
+        </div>
 
         <div class="filter-group">
           <label class="filter-label">招募状态</label>
@@ -103,7 +118,7 @@
           <input type="hidden" id="hidden-phase" name="phase">
           <input type="hidden" id="hidden-status" name="status">
           <input type="hidden" id="hidden-country" name="country">
-          <button type="submit" class="search-button">🔍 搜索</button>
+          <button type="submit" class="search-button">搜索</button>
         </form>
 
         <!-- 结果统计与排序 -->
@@ -146,14 +161,15 @@
     <div class="footer-bottom">
       <p>© 2026 EasyTrail · 数据来源 ClinicalTrials.gov · MIT License</p>
       <p class="footer-warning">⚠️ 本工具仅提供信息查询,不构成医疗建议</p>
-      <p class="footer-thanks">致谢:感谢美美小鱼提供的支持 💛</p>
+      <p class="footer-thanks">致谢：宋、薛、张博士 · 美美小鱼 · 小手冰凉 · 树岛</p>
     </div>
   </div>
 </footer>
 
-<script src="js/config.js"></script>
-<script src="js/api.js"></script>
-<script src="js/search.js"></script>
+<script src="js/config.js?v=1784200000000"></script>
+<script src="js/api.v2.js?v=1784200000000"></script>
+<script src="js/consent.js?v=1784200000000"></script>
+<script src="js/search.v3.js?v=1784200000000"></script>
 
 </body>
 </html>

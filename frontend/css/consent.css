@@ -1,0 +1,133 @@
+/* R1 入口弹窗 - 与 banner 同色系,不抢主色 */
+
+.consent-modal-mask {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  backdrop-filter: blur(3px);
+}
+
+.consent-modal {
+  background: #fff;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 520px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+  border-top: 4px solid #f59e0b;
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100vh - 2rem);  /* 一页内,不滚动 */
+}
+
+.consent-modal-header {
+  padding: 1rem 1.25rem 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-bottom: 1px solid #fef3c7;
+  background: #fef3c7;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+}
+
+.consent-modal-icon {
+  font-size: 1.25rem;
+}
+
+.consent-modal-title {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #78350f;
+  margin: 0;
+}
+
+.consent-modal-body {
+  padding: 0.85rem 1.25rem;
+  color: #1f2937;
+  font-size: 0.9rem;
+  line-height: 1.55;
+}
+
+.consent-modal-body p {
+  margin: 0 0 0.5rem;
+}
+
+.consent-modal-body ul {
+  margin: 0.35rem 0 0.5rem 1.25rem;
+  padding: 0;
+}
+
+.consent-modal-body li {
+  margin-bottom: 0.2rem;
+}
+
+.consent-modal-body strong {
+  color: #78350f;
+}
+
+.consent-modal-body a {
+  color: #2563eb;
+  text-decoration: underline;
+}
+
+.consent-modal-terms {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 1.25rem 0;
+  font-size: 0.85rem;
+  color: #6b7280;
+}
+
+.consent-modal-terms input {
+  margin: 0;
+}
+
+.consent-modal-footer {
+  padding: 0.75rem 1.25rem 1rem;
+  display: flex;
+  gap: 0.6rem;
+  background: #fafafa;
+  border-bottom-left-radius: 12px;
+  border-bottom-right-radius: 12px;
+}
+
+.consent-modal-button {
+  flex: 1;
+  padding: 0.7rem 1rem;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: opacity 0.15s;
+  font-family: inherit;
+}
+
+.consent-modal-button:hover {
+  opacity: 0.88;
+}
+
+.consent-modal-button.primary {
+  background: #2563eb;
+  color: white;
+}
+
+.consent-modal-button.secondary {
+  background: #e5e7eb;
+  color: #374151;
+  flex: 0 0 auto;
+}
+
+@media (max-width: 640px) {
+  .consent-modal { max-width: 100%; }
+  .consent-modal-title { font-size: 1rem; }
+  .consent-modal-body { font-size: 0.88rem; padding: 0.75rem 1rem; }
+  .consent-modal-footer { flex-direction: column; }
+  .consent-modal-button.secondary { flex: 1; }
+}

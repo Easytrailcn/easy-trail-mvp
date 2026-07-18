@@ -121,6 +121,9 @@ async function search() {
   const listEl = document.getElementById('results-list');
   listEl.innerHTML = '<div class="loading">加载中...</div>';
 
+  // 重置 fallback 标记
+  STATE.fallback = null;
+
   try {
     const params = {
       q: STATE.q,
@@ -141,9 +144,36 @@ async function search() {
     const result = await API.searchTrials(params);
     // API 返回 { success, data: { total, results } }
     const data = result.data || result;
-    STATE.total = data.total || 0;
+    let total = data.total || 0;
+    let results = data.results || [];
 
-    renderResults(data.results);
+    // 0 结果 fallback: 国内 0 → 自动查全球版
+    if (total === 0 && results.length === 0 && STATE.chinaOnly && STATE.offset === 0) {
+      const globalParams = { ...params, global: '1' };
+      const globalResult = await API.searchTrials(globalParams);
+      const gData = globalResult.data || globalResult;
+      const gTotal = gData.total || 0;
+      if (gTotal > 0) {
+        STATE.fallback = {
+          scope: 'global',
+          total: gTotal,
+          results: gData.results || [],
+        };
+        // 用全球结果渲染
+        results = gData.results || [];
+        // 统计: 显示全球版总数
+        STATE.total = gTotal;
+        STATE.fallbackMode = true;
+      } else {
+        STATE.total = 0;
+        STATE.fallbackMode = false;
+      }
+    } else {
+      STATE.total = total;
+      STATE.fallbackMode = false;
+    }
+
+    renderResults(results);
     renderPagination();
     renderSummary();
 
@@ -159,11 +189,25 @@ function renderResults(trials) {
   const listEl = document.getElementById('results-list');
 
   if (!trials || trials.length === 0) {
-    listEl.innerHTML = '<div class="empty-state"><h3>未找到符合条件的试验</h3><p>试试调整关键词或筛选条件</p></div>';
+    listEl.innerHTML = '<div class="empty-state"><h3>未找到符合条件的试验</h3><p>试试调整关键词或筛选条件,或切换到「全球试验」</p></div>';
     return;
   }
 
-  listEl.innerHTML = trials.map(t => renderTrialCard(t)).join('');
+  let html = '';
+
+  // Fallback 提示:国内 0 结果 → 自动展示全球版
+  if (STATE.fallbackMode && STATE.fallback) {
+    html += '<div class="fallback-notice">';
+    html += '<div class="fallback-notice-icon">⚠️</div>';
+    html += '<div class="fallback-notice-content">';
+    html += '<div class="fallback-notice-title">国内暂无该癌种临床试验</div>';
+    html += '<div class="fallback-notice-desc">以下 ' + STATE.fallback.total + ' 条为全球版试验(需跨境医疗),仅供参考。';
+    html += '点击「国内试验」可重新检索,点击「全球试验」可看完整列表。</div>';
+    html += '</div></div>';
+  }
+
+  html += trials.map(t => renderTrialCard(t, STATE.fallbackMode)).join('');
+  listEl.innerHTML = html;
 
   listEl.querySelectorAll('.trial-card').forEach(card => {
     card.addEventListener('click', () => {
@@ -173,7 +217,7 @@ function renderResults(trials) {
   });
 }
 
-function renderTrialCard(trial) {
+function renderTrialCard(trial, isFallback) {
   // 字段适配: API 列表接口字段名 (title/status/phase/condition/sponsor) -> 前端期望 (brief_title/overall_status/phases/conditions/lead_sponsor)
   const title = trial.title || trial.brief_title || '无标题';
   const status = trial.status || trial.overall_status;
@@ -190,9 +234,15 @@ function renderTrialCard(trial) {
     conditionList = trial.condition.split(/[;,、]/).map(s => s.trim()).filter(Boolean).slice(0, 3);
   }
 
-  let html = '<div class="trial-card" data-nct="' + escapeHtml(trial.nct_id) + '">';
+  let html = '<div class="trial-card' + (isFallback ? ' trial-card-global' : '') + '" data-nct="' + escapeHtml(trial.nct_id) + '">';
   html += '<div class="trial-card-header">';
+  html += '<div class="trial-card-title-wrap">';
+  if (isFallback) html += '<span class="global-tag">全球</span>';
   html += '<div class="trial-card-title">' + escapeHtml(title) + '</div>';
+  if (trial.title_zh && trial.title_zh.trim() && trial.title_zh !== title) {
+    html += '<div class="trial-card-title-zh">' + escapeHtml(trial.title_zh) + '</div>';
+  }
+  html += '</div>';
   html += '<div class="trial-card-id">' + escapeHtml(trial.nct_id) + '</div>';
   html += '</div>';
 

@@ -22,7 +22,9 @@ async function loadTrial(nctId) {
   detailEl.innerHTML = '<div class="detail-loading">加载中...</div>';
 
   try {
-    const trial = await API.getTrial(nctId);
+    const result = await API.getTrial(nctId);
+    // API 返回 { success, data: {...} } - 解开 data 包装
+    const trial = result.data || result;
     renderTrial(trial);
     document.title = (trial.brief_title || '试验详情') + ' - EasyTrail';
   } catch (err) {
