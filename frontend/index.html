@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="css/style.css?v=1784181000000">
   <link rel="stylesheet" href="css/banner.css?v=1784181000000">
   <link rel="stylesheet" href="css/consent.css?v=1784181000000">
+  <link rel="stylesheet" href="css/search.css?v=1784620000000">
 </head>
 <body>
 
@@ -218,6 +219,69 @@
 <script src="js/api.js?v=1784181000000"></script>
 <script src="js/consent.js?v=1784181000000"></script>
 <script src="js/index.js?v=1784181000000"></script>
+
+<!-- 彩蛋: 美美小鱼 特别致谢弹窗 -->
+<div id="easter-egg-modal" class="easter-egg-modal" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="easter-egg-title">
+  <div class="easter-egg-backdrop"></div>
+  <div class="easter-egg-card">
+    <button class="easter-egg-close" aria-label="关闭">×</button>
+    <div class="easter-egg-icon">🌸</div>
+    <h2 id="easter-egg-title" class="easter-egg-title">致 谢</h2>
+    <p class="easter-egg-text">感谢在最好的年华遇到最好的你，希望我们携手并进，关关难过关关过，前路漫漫亦灿灿！</p>
+    <p class="easter-egg-from">— 美美小鱼</p>
+  </div>
+</div>
+
+<script>
+(function() {
+  const EASTER_EGG_KEYWORD = '美美小鱼';
+  let easterEggShown = false;
+
+  function init() {
+    const input = document.querySelector('input.search-input, input[name="q"]');
+    const modal = document.getElementById('easter-egg-modal');
+    if (!input || !modal) return;
+
+    function showEasterEgg() {
+      modal.style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+      setTimeout(() => {
+        const closeBtn = modal.querySelector('.easter-egg-close');
+        if (closeBtn) closeBtn.focus();
+      }, 100);
+    }
+    function hideEasterEgg() {
+      modal.style.display = 'none';
+      document.body.style.overflow = '';
+    }
+
+    input.addEventListener('input', () => {
+      const v = input.value.trim();
+      if (v === EASTER_EGG_KEYWORD && !easterEggShown) {
+        easterEggShown = true;
+        showEasterEgg();
+      } else if (v !== EASTER_EGG_KEYWORD) {
+        easterEggShown = false;
+      }
+    });
+
+    const closeBtn = modal.querySelector('.easter-egg-close');
+    if (closeBtn) closeBtn.addEventListener('click', hideEasterEgg);
+    const backdrop = modal.querySelector('.easter-egg-backdrop');
+    if (backdrop) backdrop.addEventListener('click', hideEasterEgg);
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && modal.style.display === 'flex') hideEasterEgg();
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();
+</script>
 
 </body>
 </html>
